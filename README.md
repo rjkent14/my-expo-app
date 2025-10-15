@@ -23,7 +23,7 @@ A React Native/Expo application that demonstrates dynamic component management a
 
 ## Screenshots
 
-![Component Showcase Demo](screenshot.png)
+![Component Showcase Demo](image/screenshot.png.jpg)
 
 *The above screenshot shows the app's "Add Dynamic Components" section with controls for adding different component types, and the "Dynamic Components" section displaying an added button and image.*
 
