@@ -1,21 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import {
-  StyleSheet,
-  Text,
-  View,
-  TextInput,
-  TouchableOpacity,
-  Alert,
-  Dimensions,
-  KeyboardAvoidingView,
-  Platform,
-  Image,
-  Animated,
-  PixelRatio
-} from 'react-native';
+    StyleSheet,
+    Text,
+    View,
+    TextInput,
+    TouchableOpacity,
+    Alert,
+    Dimensions,
+    KeyboardAvoidingView,
+    Platform,
+    Image,
+    Animated,
+    ScrollView,
+    PixelRatio
+  } from 'react-native';
 import * as Haptics from 'expo-haptics';
-import SignupScreen from './SignupScreen';
 
 const { width, height } = Dimensions.get('window');
 
@@ -50,25 +50,26 @@ const getScaledFontSize = (baseSize) => {
   return Math.round(PixelRatio.roundToNearestPixel(baseSize * fontScale));
 };
 
-export default function App() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+export default function SignupScreen({ onSwitchToLogin }) {
+  const [signupEmail, setSignupEmail] = useState('');
+  const [signupPassword, setSignupPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [fullName, setFullName] = useState('');
+  const [agreeToTerms, setAgreeToTerms] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [isSignup, setIsSignup] = useState(false);
 
   // Animation values using React Native Animated
   const logoOpacity = new Animated.Value(0);
   const logoScale = new Animated.Value(0.8);
   const formTranslateY = new Animated.Value(50);
 
-  // Function to reset and start animations
-  const resetAndStartAnimations = () => {
-    // Reset animation values to initial state
+  useEffect(() => {
+    // Reset animation values when component mounts
     logoOpacity.setValue(0);
     logoScale.setValue(0.8);
     formTranslateY.setValue(50);
 
-    // Start animations
+    // Start animations when component mounts
     Animated.parallel([
       Animated.timing(logoOpacity, {
         toValue: 1,
@@ -88,25 +89,7 @@ export default function App() {
         useNativeDriver: true,
       }),
     ]).start();
-  };
-
-  useEffect(() => {
-    // Start animations when component mounts
-    resetAndStartAnimations();
   }, []);
-
-  // Reset animations when navigating back from signup
-  useEffect(() => {
-    if (!isSignup) {
-      // Small delay to ensure smooth transition
-      const timeoutId = setTimeout(() => {
-        resetAndStartAnimations();
-      }, 100);
-
-      // Cleanup timeout to prevent memory leaks
-      return () => clearTimeout(timeoutId);
-    }
-  }, [isSignup]);
 
   const logoAnimatedStyle = {
     opacity: logoOpacity,
@@ -117,36 +100,50 @@ export default function App() {
     transform: [{ translateY: formTranslateY }],
   };
 
-  const handleLogin = async () => {
+  const handleSignup = async () => {
     // Haptic feedback for button press
     await triggerHapticFeedback('light');
 
-    if (!email || !password) {
+    if (!signupEmail || !signupPassword || !confirmPassword || !fullName) {
       // Haptic feedback for error
       await triggerHapticFeedback('error');
       Alert.alert('Error', 'Please fill in all fields');
       return;
     }
 
+    if (signupPassword !== confirmPassword) {
+      // Haptic feedback for error
+      await triggerHapticFeedback('error');
+      Alert.alert('Error', 'Passwords do not match');
+      return;
+    }
+
+    if (!agreeToTerms) {
+      // Haptic feedback for error
+      await triggerHapticFeedback('error');
+      Alert.alert('Error', 'Please agree to the terms and conditions');
+      return;
+    }
+
     setIsLoading(true);
 
-    // Simulate login API call
+    // Simulate signup API call
     setTimeout(async () => {
       setIsLoading(false);
 
-      // Test credentials for validation
-      if (email === 'test@test.com' && password === 'password') {
+      if (signupEmail.includes('@')) {
         // Haptic feedback for success
         await triggerHapticFeedback('success');
-        Alert.alert('Success', `Welcome! Logged in with email: ${email}`);
+        Alert.alert('Success', `Account created for ${fullName}!`);
+        // Switch back to login screen after successful signup
+        onSwitchToLogin();
       } else {
         // Haptic feedback for error
         await triggerHapticFeedback('error');
-        Alert.alert('Error', 'Invalid email or password');
+        Alert.alert('Error', 'Please enter a valid email address');
       }
     }, 1500);
   };
-
 
   const logoComponent = () => (
     <Animated.View style={[styles.logoContainer, logoAnimatedStyle]}>
@@ -154,20 +151,10 @@ export default function App() {
         <Text style={styles.logoText}>♪</Text>
       </Animated.View>
       <Text style={styles.logoTitle}>Spotify</Text>
-      <Text style={styles.logoSubtitle}>Music for everyone</Text>
+      <Text style={styles.logoSubtitle}>Create your account</Text>
     </Animated.View>
   );
 
-  // Show signup screen if isSignup is true
-  if (isSignup) {
-    return (
-      <SignupScreen
-        onSwitchToLogin={() => setIsSignup(false)}
-      />
-    );
-  }
-
-  // Otherwise show login screen
   return (
     <KeyboardAvoidingView
       style={styles.container}
@@ -179,27 +166,50 @@ export default function App() {
       <View style={styles.background} />
 
       {/* Content */}
-      <View style={styles.content}>
+      <ScrollView
+        style={styles.scrollContent}
+        contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+      >
         {/* Logo Section */}
         {logoComponent()}
 
         {/* Form Section */}
         <Animated.View style={[styles.formContainer, formAnimatedStyle]}>
           <View style={styles.inputGroup}>
-            <Text style={styles.inputLabel}>Email or username</Text>
+            <Text style={styles.inputLabel}>Full Name</Text>
             <TextInput
               style={styles.textInput}
-              placeholder="Email or username"
+              placeholder="Enter your full name"
               placeholderTextColor="#9CA3AF"
-              value={email}
-              onChangeText={setEmail}
+              value={fullName}
+              onChangeText={setFullName}
+              autoCapitalize="words"
+              autoCorrect={false}
+              accessibilityLabel="Full name input field"
+              accessibilityHint="Enter your first and last name"
+              accessibilityRole="text"
+              textContentType="name"
+              autoComplete="name"
+            />
+          </View>
+
+          <View style={[styles.inputGroup, styles.passwordGroup]}>
+            <Text style={styles.inputLabel}>Email</Text>
+            <TextInput
+              style={styles.textInput}
+              placeholder="Enter your email"
+              placeholderTextColor="#9CA3AF"
+              value={signupEmail}
+              onChangeText={setSignupEmail}
               keyboardType="email-address"
               autoCapitalize="none"
               autoCorrect={false}
-              accessibilityLabel="Email or username input field"
-              accessibilityHint="Enter your email address or username to log in"
+              accessibilityLabel="Email input field"
+              accessibilityHint="Enter your email address for account creation"
               accessibilityRole="text"
-              textContentType="username"
+              textContentType="emailAddress"
               autoComplete="email"
             />
           </View>
@@ -208,86 +218,90 @@ export default function App() {
             <Text style={styles.inputLabel}>Password</Text>
             <TextInput
               style={styles.textInput}
-              placeholder="Password"
+              placeholder="Create a password"
               placeholderTextColor="#9CA3AF"
-              value={password}
-              onChangeText={setPassword}
+              value={signupPassword}
+              onChangeText={setSignupPassword}
               secureTextEntry
               autoCapitalize="none"
               autoCorrect={false}
               accessibilityLabel="Password input field"
-              accessibilityHint="Enter your password to log in"
+              accessibilityHint="Create a secure password for your account"
+              accessibilityRole="text"
+              textContentType="newPassword"
+              autoComplete="password-new"
+            />
+          </View>
+
+          <View style={[styles.inputGroup, styles.passwordGroup]}>
+            <Text style={styles.inputLabel}>Confirm Password</Text>
+            <TextInput
+              style={styles.textInput}
+              placeholder="Confirm your password"
+              placeholderTextColor="#9CA3AF"
+              value={confirmPassword}
+              onChangeText={setConfirmPassword}
+              secureTextEntry
+              autoCapitalize="none"
+              autoCorrect={false}
+              accessibilityLabel="Confirm password input field"
+              accessibilityHint="Re-enter your password to confirm it matches"
               accessibilityRole="text"
               textContentType="password"
-              autoComplete="password"
+              autoComplete="password-new"
             />
           </View>
 
           <TouchableOpacity
-            style={styles.forgotButton}
-            accessibilityLabel="Forgot password button"
-            accessibilityHint="Tap to reset your password"
+            style={styles.backToLoginButton}
+            onPress={async () => {
+              await triggerHapticFeedback('light');
+              onSwitchToLogin();
+            }}
+            accessibilityLabel="Sign in link"
+            accessibilityHint="Tap to go back to the login screen"
             accessibilityRole="button"
           >
-            <Text style={styles.forgotButtonText}>Forgot your password?</Text>
+            <Text style={styles.backToLoginText}>
+              Already have an account?{' '}
+              <Text style={styles.signInLink}>Sign in</Text>
+            </Text>
           </TouchableOpacity>
+
+          <View style={styles.checkboxContainer}>
+            <TouchableOpacity
+              style={styles.checkbox}
+              onPress={() => setAgreeToTerms(!agreeToTerms)}
+              accessibilityLabel={agreeToTerms ? "Terms and conditions accepted" : "Accept terms and conditions"}
+              accessibilityHint="Tap to agree or disagree with the terms and conditions"
+              accessibilityRole="checkbox"
+              accessibilityState={{ checked: agreeToTerms }}
+            >
+              <Text style={styles.checkboxText}>{agreeToTerms ? '✓' : '○'}</Text>
+            </TouchableOpacity>
+            <Text style={styles.checkboxLabel}>
+              I agree to the{' '}
+              <Text style={styles.linkText}>Terms and Conditions</Text>
+              {' '}and{' '}
+              <Text style={styles.linkText}>Privacy Policy</Text>
+            </Text>
+          </View>
 
           <TouchableOpacity
             style={[styles.loginButton, isLoading && styles.loginButtonDisabled]}
-            onPress={handleLogin}
+            onPress={handleSignup}
             disabled={isLoading}
-            accessibilityLabel={isLoading ? "Logging in, please wait" : "Log in button"}
-            accessibilityHint={isLoading ? "Authentication in progress" : "Tap to log in with your email and password"}
+            accessibilityLabel={isLoading ? "Creating account, please wait" : "Sign up button"}
+            accessibilityHint={isLoading ? "Account creation in progress" : "Tap to create your account with the provided information"}
             accessibilityRole="button"
             accessibilityState={{ disabled: isLoading }}
           >
             <Text style={styles.loginButtonText}>
-              {isLoading ? 'LOGGING IN...' : 'LOG IN'}
+              {isLoading ? 'CREATING ACCOUNT...' : 'SIGN UP'}
             </Text>
           </TouchableOpacity>
         </Animated.View>
-
-        {/* Footer */}
-        <View style={styles.footer}>
-          <View style={styles.socialButtonsContainer}>
-            <TouchableOpacity
-              style={styles.imageButton}
-              accessibilityLabel="Continue with Facebook"
-              accessibilityHint="Tap to log in using your Facebook account"
-              accessibilityRole="button"
-            >
-              <Image source={require('./image/facebook.png')} style={styles.socialImage} />
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.imageButton}
-              accessibilityLabel="Continue with Google"
-              accessibilityHint="Tap to log in using your Google account"
-              accessibilityRole="button"
-            >
-              <Image source={require('./image/Google.png')} style={styles.socialImage} />
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.signupContainer}>
-            <TouchableOpacity
-              style={styles.signupLinkButton}
-              onPress={async () => {
-                await triggerHapticFeedback('light');
-                setIsSignup(true);
-              }}
-              accessibilityLabel="Sign up link"
-              accessibilityHint="Tap to create a new account"
-              accessibilityRole="button"
-            >
-              <Text style={styles.signupText}>
-                Don't have an account?{' '}
-                <Text style={styles.signupLink}>Sign up</Text>
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View>
+      </ScrollView>
     </KeyboardAvoidingView>
   );
 }
@@ -295,6 +309,9 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
   },
   background: {
     position: 'absolute',
@@ -305,15 +322,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#121212', // Spotify dark background
   },
   content: {
-    flex: 1,
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingTop: 40,
-    paddingBottom: 20,
+    flexGrow: 1,
+    paddingHorizontal: 24,
+    paddingTop: 60,
+    paddingBottom: 40,
   },
   logoContainer: {
     alignItems: 'center',
-    marginTop: 20,
+    marginTop: 40,
   },
   logoIcon: {
     width: 60,
@@ -342,16 +358,15 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   formContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    marginTop: 80, // Reduced space between logo and form
+    marginTop: 20,
+    paddingBottom: 40,
   },
   inputGroup: {
-    marginBottom: 12, // Further reduced space after email field
+    marginBottom: 12,
   },
   passwordGroup: {
-    marginTop: 10, // Further reduced space above password field
-    marginBottom: 12, // Further reduced space after password field
+    marginTop: 10,
+    marginBottom: 12,
   },
   inputLabel: {
     fontSize: getScaledFontSize(16),
@@ -373,102 +388,72 @@ const styles = StyleSheet.create({
     backgroundColor: '#1DB954', // Spotify green
     borderRadius: 32,
     paddingVertical: 18,
-    paddingHorizontal: 60, // Wider button for better text visibility
+    paddingHorizontal: 60,
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 28,
     marginBottom: 16,
     alignSelf: 'center',
-    width: 200, // Fixed width for consistent appearance
-    height: 56, // Fixed height for better proportions
+    width: 200,
+    height: 56,
   },
   loginButtonDisabled: {
     opacity: 0.7,
   },
   loginButtonText: {
     color: '#FFFFFF',
-    fontSize: getScaledFontSize(18), // Slightly larger for better visibility
+    fontSize: getScaledFontSize(18),
     fontWeight: 'bold',
     letterSpacing: 1.2,
     textAlign: 'center',
     includeFontPadding: false,
     textAlignVertical: 'center',
   },
-  forgotButton: {
-    alignItems: 'flex-end', // Align to the right
-    marginTop: 4, // Reduced space above forgot password text
-    paddingRight: 20, // Add right padding to push it further right
+  backToLoginButton: {
+    alignItems: 'flex-end',
+    marginTop: 16,
+    marginBottom: 24,
+    paddingRight: 20,
   },
-  forgotButtonText: {
+  backToLoginText: {
     color: '#B3B3B3',
     fontSize: getScaledFontSize(14),
+  },
+  signInLink: {
+    color: '#FFFFFF',
+    fontWeight: '600',
     textDecorationLine: 'underline',
   },
-  footer: {
-    alignItems: 'center',
-    marginTop: 20,
-    paddingTop: 20, // Reduced space above the social images
-  },
-  socialButtonsContainer: {
+  checkboxContainer: {
     flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 15, // Further reduced space below social buttons
-    gap: 30, // Reduced space between the buttons
+    alignItems: 'flex-start',
+    marginBottom: 20,
+    paddingHorizontal: 4,
   },
-  facebookButton: {
-    backgroundColor: '#1877F2', // Facebook blue
-    borderRadius: 32,
-    paddingVertical: 16,
-    paddingHorizontal: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 16,
-    width: 80,
-    height: 56,
-  },
-  googleButton: {
-    backgroundColor: '#2A2A2A',
-    borderWidth: 1,
-    borderColor: '#3A3A3A',
-    borderRadius: 32,
-    paddingVertical: 16,
-    paddingHorizontal: 16,
+  checkbox: {
+    width: 24,
+    height: 24,
+    borderWidth: 2,
+    borderColor: '#FFFFFF',
+    borderRadius: 4,
+    marginRight: 12,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 24,
-    width: 80,
-    height: 56,
-  },
-  socialImage: {
-    width: 48,
-    height: 48,
-    resizeMode: 'contain',
-  },
-  imageButton: {
-    padding: 12,
-    borderRadius: 8,
     backgroundColor: 'transparent',
-    alignItems: 'center',
-    justifyContent: 'center',
   },
-  signupContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 8,
+  checkboxText: {
+    color: '#1DB954',
+    fontSize: getScaledFontSize(16),
+    fontWeight: 'bold',
   },
-  signupText: {
-    color: '#FFFFFF',
+  checkboxLabel: {
+    color: '#B3B3B3',
     fontSize: getScaledFontSize(14),
+    flex: 1,
+    lineHeight: 20,
   },
-  signupLinkButton: {
-    paddingVertical: 4,
-    paddingHorizontal: 8,
-  },
-  signupLink: {
-    color: '#1DB954', // Spotify green
-    fontSize: getScaledFontSize(14),
-    fontWeight: '600',
+  linkText: {
+    color: '#1DB954',
+    textDecorationLine: 'underline',
   },
 });

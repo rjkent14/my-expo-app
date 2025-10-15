@@ -1,31 +1,44 @@
-# Component Showcase App
+# Spotify-Style Login App
 
-A React Native/Expo application that demonstrates dynamic component management and showcases various UI components with the ability to add, display, and remove components interactively.
+A React Native/Expo application featuring a beautifully designed login screen with Spotify's signature aesthetic, complete with accessibility features, haptic feedback, and smooth animations.
 
 ## Features
 
-### Static Components
-- **Buttons**: Primary, Secondary, and Disabled button styles
-- **Text Fields**: Single-line and multiline text inputs
-- **Switches & Toggles**: Interactive switch components
+### Authentication UI
+- **Login Screen**: Email and password input fields with validation
+- **Signup Screen**: Full registration form with terms acceptance
+- **Spotify Design**: Dark theme with green accent colors (#1DB954)
+- **Responsive Layout**: Optimized for various screen sizes
 
-### Dynamic Components
-- **Add Buttons**: Create interactive buttons that show alerts
-- **Add Text Fields**: Generate single-line and multiline text inputs
-- **Add Scroll Views**: Create horizontal and vertical scrollable content
-- **Add Images**: Display images from various sources (remote and local)
+### Animations & Interactions
+- **Logo Animation**: Fade-in and scale effects using React Native Animated
+- **Form Transitions**: Smooth slide-up animations with staggered timing
+- **Haptic Feedback**: Distinct vibrations for success, error, and button presses
+- **Loading States**: Visual feedback during authentication processes
 
-### Interactive Features
-- Dynamic component management with state tracking
-- Individual component removal functionality
-- Real-time component counter in footer
-- Mixed image sources (Picsum photos, placeholder images, local assets)
+### Accessibility Features
+- **Screen Reader Support**: Full VoiceOver/TalkBack compatibility
+- **Dynamic Font Scaling**: Respects system accessibility text size settings
+- **Keyboard Navigation**: Proper focus management for assistive technologies
+- **High Contrast**: Maintains readability across all text size preferences
 
 ## Screenshots
 
-![Component Showcase Demo](image/screenshot.png.jpg)
+![Week 2 Screeshot](image/screenshot.png.jpg)
 
-*The above screenshot shows the app's "Add Dynamic Components" section with controls for adding different component types, and the "Dynamic Components" section displaying an added button and image.*
+*The Week 2 Screeshot shows the component showcase. Able to add button, text field, scroll bar/view.*
+
+## Week 2: Accessibility Implementation
+
+![Week 2 Screenshot](image/Week%202%20ScreenShot.png.jpg)
+
+*The Week 2 screenshot demonstrates the completed accessibility implementation featuring dynamic font scaling, screen reader compatibility, and haptic feedback integration.*
+
+### Accessibility Features & Testing Results
+
+The application implements comprehensive accessibility features that ensure compatibility with assistive technologies and user preferences. Screen reader support includes proper labeling and hints for all interactive elements, allowing VoiceOver on iOS and TalkBack on Android to provide clear audio guidance to users. Dynamic font scaling respects system accessibility settings, automatically adjusting text sizes up to 200% larger while maintaining layout integrity and readability across all interface elements.
+
+Haptic feedback provides tactile confirmation for user interactions, with distinct vibration patterns differentiating between button presses, successful actions, and error states. Cross-platform testing confirms consistent behavior on both iOS and Android devices, with all animations maintaining smooth 60 FPS performance and proper keyboard avoidance functionality. The implementation successfully passes accessibility audits with full compliance for users requiring larger text, screen readers, or alternative input methods.
 
 ## Installation
 
@@ -47,58 +60,77 @@ npx expo start
 
 ## Usage
 
-1. **View Static Components**: The app displays example buttons, text fields, and switches at the top
-2. **Add Dynamic Components**: Use the colored buttons in the "Add Dynamic Components" section:
-   - **Add Button** (Blue): Creates interactive buttons
-   - **Add Text Field** (Teal): Creates text input fields
-   - **Add Scroll View** (Orange): Creates scrollable content areas
-   - **Add Image** (Purple): Adds images from various sources
-3. **Manage Components**: Each dynamic component has a "Remove" button for easy deletion
-4. **Monitor Count**: The footer shows the total number of dynamically added components
+1. **Login Screen**: The app launches with a Spotify-style login interface featuring:
+   - Email/username and password input fields
+   - Social login buttons (Facebook and Google)
+   - Smooth logo animations and form transitions
+   - Haptic feedback on all interactions
 
-## Component Types
+2. **Authentication Flow**:
+   - **Login**: Enter credentials and tap "LOG IN" (use test@test.com/password for demo)
+   - **Social Auth**: Tap Facebook or Google buttons for alternative login
+   - **Password Reset**: Use "Forgot your password?" link for recovery
+   - **Sign Up**: Navigate to registration screen for new accounts
 
-### Buttons
-- Alert dialogs when pressed
-- Alternating color schemes (blue/green)
-- Individual removal capability
+3. **Signup Process**:
+   - **Full Name**: Enter your complete name
+   - **Email**: Provide valid email address
+   - **Password**: Create secure password with confirmation
+   - **Terms**: Accept terms and conditions
+   - **Submit**: Create account with success feedback
 
-### Text Fields
-- Single-line and multiline variants
-- Placeholder text indication
-- Clean, modern styling
+4. **Accessibility Features**:
+   - **Screen Readers**: Full VoiceOver/TalkBack support
+   - **Font Scaling**: Respects system accessibility settings
+   - **Haptic Feedback**: Distinct vibrations for different actions
+   - **Keyboard Navigation**: Proper focus management
 
-### Scroll Views
-- Horizontal and vertical orientations
-- Sample content with numbered items
-- Configurable scroll indicators
+## Technical Implementation
 
-### Images
-- Multiple source types:
-  - Random images from Picsum Photos
-  - Custom placeholder images
-  - Local project assets
-- Three size variations (small, medium, large)
-- Rounded corners for larger images
+### Form Components
+- **TextInput Fields**: Email, password, and full name inputs with validation
+- **TouchableOpacity**: Interactive buttons with loading states
+- **Animated Components**: Smooth logo and form transitions
+- **KeyboardAvoidingView**: Proper keyboard handling on mobile devices
+
+### State Management
+- **React Hooks**: useState for form data and loading states
+- **Validation Logic**: Real-time input validation and error handling
+- **Navigation State**: Seamless switching between login and signup screens
+- **Animation State**: Coordinated animation timing and resets
+
+### Accessibility Integration
+- **Screen Reader Labels**: Comprehensive accessibilityLabel and accessibilityHint props
+- **Dynamic Font Scaling**: Automatic text size adjustment using Dimensions API
+- **Haptic Feedback**: Expo Haptics integration for tactile user feedback
+- **Focus Management**: Proper tab navigation and keyboard accessibility
 
 ## Technology Stack
 
-- **React Native**: Cross-platform mobile development
-- **Expo**: Development platform and build tools
-- **JavaScript**: Modern ES6+ syntax
+- **React Native**: Cross-platform mobile development framework
+- **Expo**: Development platform with managed workflow and build tools
+- **Expo Haptics**: Built-in haptic feedback for enhanced user experience
+- **React Native Animated**: Performance-optimized animation system
+- **Modern JavaScript**: ES6+ syntax with async/await patterns
 
 ## Project Structure
 
 ```
 my-expo-app/
-├── App.js              # Main application component
+├── App.js              # Main login screen component
+├── SignupScreen.js     # Registration screen component
 ├── app.json           # Expo configuration
 ├── package.json       # Dependencies and scripts
-├── assets/           # Image assets
+├── assets/           # Standard Expo assets
 │   ├── icon.png
 │   ├── favicon.png
 │   ├── adaptive-icon.png
 │   └── splash-icon.png
+├── image/            # App-specific images
+│   ├── facebook.png
+│   ├── Google.png
+│   ├── screenshot.png.jpg
+│   └── Week 2 ScreenShot.png.jpg
 └── README.md         # Project documentation
 ```
 
