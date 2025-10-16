@@ -1,20 +1,22 @@
-# Spotify-Style Login App
+# Spotify Clone App
 
-A React Native/Expo application featuring a beautifully designed login screen with Spotify's signature aesthetic, complete with accessibility features, haptic feedback, and smooth animations.
+A full-featured React Native/Expo application that replicates Spotify's design and functionality, featuring multiple screens, navigation, offline caching, and comprehensive accessibility support.
 
 ## Features
 
-### Authentication UI
-- **Login Screen**: Email and password input fields with validation
-- **Signup Screen**: Full registration form with terms acceptance
-- **Spotify Design**: Dark theme with green accent colors (#1DB954)
-- **Responsive Layout**: Optimized for various screen sizes
+### Core Functionality
+- **Multi-Screen Navigation**: Profile, Settings, and Playlists screens with drawer navigation
+- **Authentication System**: Complete login/signup flow with form validation
+- **Offline Navigation Caching**: AsyncStorage-based state persistence for seamless UX
+- **Spotify Design Language**: Dark theme with green accent colors (#1DB954)
+- **Responsive Layout**: Optimized for various screen sizes and platforms
 
-### Animations & Interactions
-- **Logo Animation**: Fade-in and scale effects using React Native Animated
-- **Form Transitions**: Smooth slide-up animations with staggered timing
+### Advanced Features
+- **Animated Drawer Navigation**: Custom drawer with smooth slide transitions
+- **Navigation State Persistence**: Remembers last visited screen across app restarts
 - **Haptic Feedback**: Distinct vibrations for success, error, and button presses
-- **Loading States**: Visual feedback during authentication processes
+- **Loading States**: Visual feedback during all async operations
+- **Cross-Platform Support**: Web, iOS, and Android compatibility
 
 ### Accessibility Features
 - **Screen Reader Support**: Full VoiceOver/TalkBack compatibility
@@ -32,25 +34,7 @@ A React Native/Expo application featuring a beautifully designed login screen wi
 
 ![Week 2 Screenshot](image/Week%202%20ScreenShot.png.jpg)
 
-*The Week 2 screenshot demonstrates the completed accessibility implementation featuring dynamic font scaling, screen reader compatibility, and haptic feedback integration.*
-
-### Accessibility Features & Testing Results
-
-The application implements comprehensive accessibility features that ensure compatibility with assistive technologies and user preferences. Screen reader support includes proper labeling and hints for all interactive elements, allowing VoiceOver on iOS and TalkBack on Android to provide clear audio guidance to users. Dynamic font scaling respects system accessibility settings, automatically adjusting text sizes up to 200% larger while maintaining layout integrity and readability across all interface elements.
-
-Haptic feedback provides tactile confirmation for user interactions, with distinct vibration patterns differentiating between button presses, successful actions, and error states. Cross-platform testing confirms consistent behavior on both iOS and Android devices, with all animations maintaining smooth 60 FPS performance and proper keyboard avoidance functionality. The implementation successfully passes accessibility audits with full compliance for users requiring larger text, screen readers, or alternative input methods.
-
-## Week 2: Multi-Screen Navigation
-
-![Week 2 Multi-Screen Navigation Demo](image/Week%202%20Act%202.mp4)
-
-*The Week 2 Activity 2 video demonstrates the complete multi-screen navigation system with animated drawer transitions, offline state caching, and comprehensive accessibility features. The navigation flow seamlessly guides users from login through the main app screens while maintaining Spotify's signature design language and ensuring full compatibility with assistive technologies.*
-
-### Navigation Flow & Accessibility Features
-
-The navigation system implements a sophisticated drawer-based architecture that allows users to seamlessly transition between the Playlists, Profile, and Settings screens using an animated side drawer with Spotify-style branding and smooth react-native-reanimated transitions. Each screen maintains consistent header styling with green accent colors and includes proper accessibility labels, hints, and focus management for screen reader compatibility across iOS and Android platforms.
-
-Offline navigation caching using AsyncStorage ensures users return to their last visited screen when reopening the app, with intelligent fallbacks to the Profile screen if cached data is invalid or expired. The implementation includes comprehensive accessibility features such as ARIA labels for all interactive elements, keyboard navigation support, and platform-optimized animation timing that provides natural feel on both iOS and Android devices while maintaining 60 FPS performance.
+*The above screenshot shows the app's "Add Dynamic Components" section with controls for adding different component types, and the "Dynamic Components" section displaying an added button and image.*
 
 ## Installation
 
@@ -72,8 +56,8 @@ npx expo start
 
 ## Usage
 
-1. **Login Screen**: The app launches with a Spotify-style login interface featuring:
-   - Email/username and password input fields
+1. **App Launch**: The app launches with a Spotify-style login interface featuring:
+   - Email/username and password input fields with validation
    - Social login buttons (Facebook and Google)
    - Smooth logo animations and form transitions
    - Haptic feedback on all interactions
@@ -84,43 +68,58 @@ npx expo start
    - **Password Reset**: Use "Forgot your password?" link for recovery
    - **Sign Up**: Navigate to registration screen for new accounts
 
-3. **Signup Process**:
-   - **Full Name**: Enter your complete name
-   - **Email**: Provide valid email address
-   - **Password**: Create secure password with confirmation
-   - **Terms**: Accept terms and conditions
-   - **Submit**: Create account with success feedback
+3. **Main App Navigation** (after login):
+   - **Profile Screen**: View and edit user information, see activity stats
+   - **Settings Screen**: Configure app preferences, notification settings, logout
+   - **Playlists Screen**: Browse music playlists with horizontal scrolling
+   - **Navigation Caching**: App remembers your last visited screen
 
-4. **Accessibility Features**:
-   - **Screen Readers**: Full VoiceOver/TalkBack support
+4. **Navigation Features**:
+   - **Drawer Menu**: Slide from left edge or tap hamburger to access navigation
+   - **Screen Persistence**: Last visited screen is cached and restored on app restart
+   - **Smooth Transitions**: Animated screen changes with proper timing
+   - **Cross-Platform**: Consistent experience on web, iOS, and Android
+
+5. **Accessibility Features**:
+   - **Screen Readers**: Full VoiceOver/TalkBack support across all screens
    - **Font Scaling**: Respects system accessibility settings
    - **Haptic Feedback**: Distinct vibrations for different actions
-   - **Keyboard Navigation**: Proper focus management
+   - **Keyboard Navigation**: Proper focus management and navigation
 
 ## Technical Implementation
 
-### Form Components
-- **TextInput Fields**: Email, password, and full name inputs with validation
-- **TouchableOpacity**: Interactive buttons with loading states
-- **Animated Components**: Smooth logo and form transitions
-- **KeyboardAvoidingView**: Proper keyboard handling on mobile devices
+### Core Architecture
+- **React Navigation**: Stack and drawer navigators with custom animations
+- **Component Structure**: Modular screens with shared UI components
+- **State Management**: React hooks for local state and navigation state
+- **AsyncStorage Integration**: Persistent navigation caching across app restarts
 
-### State Management
-- **React Hooks**: useState for form data and loading states
-- **Validation Logic**: Real-time input validation and error handling
-- **Navigation State**: Seamless switching between login and signup screens
-- **Animation State**: Coordinated animation timing and resets
+### Navigation System
+- **Drawer Navigator**: Custom animated drawer with accessibility support
+- **Stack Navigator**: Screen transitions with proper header configurations
+- **Navigation Persistence**: AsyncStorage-based state caching and restoration
+- **Screen Listeners**: Automatic cache updates on navigation changes
+
+### Animation & Interaction
+- **React Native Reanimated**: Advanced animations for drawer and transitions
+- **React Native Animated**: Logo animations and form transitions
+- **Haptic Feedback**: Expo Haptics integration for tactile responses
+- **Gesture Handling**: React Native Gesture Handler for smooth interactions
 
 ### Accessibility Integration
 - **Screen Reader Labels**: Comprehensive accessibilityLabel and accessibilityHint props
 - **Dynamic Font Scaling**: Automatic text size adjustment using Dimensions API
-- **Haptic Feedback**: Expo Haptics integration for tactile user feedback
 - **Focus Management**: Proper tab navigation and keyboard accessibility
+- **Cross-Platform**: Consistent accessibility across web, iOS, and Android
 
 ## Technology Stack
 
 - **React Native**: Cross-platform mobile development framework
 - **Expo**: Development platform with managed workflow and build tools
+- **React Navigation**: Complete navigation solution for React Native apps
+- **React Native Reanimated**: Powerful animation library for smooth interactions
+- **React Native Gesture Handler**: Declarative API for handling touch gestures
+- **AsyncStorage**: Persistent storage for navigation caching
 - **Expo Haptics**: Built-in haptic feedback for enhanced user experience
 - **React Native Animated**: Performance-optimized animation system
 - **Modern JavaScript**: ES6+ syntax with async/await patterns
@@ -129,21 +128,31 @@ npx expo start
 
 ```
 my-expo-app/
-├── App.js              # Main login screen component
-├── SignupScreen.js     # Registration screen component
-├── app.json           # Expo configuration
-├── package.json       # Dependencies and scripts
-├── assets/           # Standard Expo assets
+├── App.js                     # Main app component with authentication
+├── SignupScreen.js           # Registration screen component
+├── index.js                  # App entry point
+├── app.json                  # Expo configuration (dark theme)
+├── babel.config.js           # Babel transpiler configuration
+├── package.json              # Dependencies and scripts
+├── assets/                   # Standard Expo assets
 │   ├── icon.png
 │   ├── favicon.png
 │   ├── adaptive-icon.png
 │   └── splash-icon.png
-├── image/            # App-specific images
+├── image/                    # App-specific images
 │   ├── facebook.png
 │   ├── Google.png
 │   ├── screenshot.png.jpg
 │   └── Week 2 ScreenShot.png.jpg
-└── README.md         # Project documentation
+├── navigation/               # Navigation components
+│   └── MainAppNavigator.js   # Main drawer navigator with animations
+├── screens/                  # App screens
+│   ├── ProfileScreen.js      # User profile screen
+│   ├── SettingsScreen.js     # App settings screen
+│   └── PlaylistsScreen.js    # Music playlists screen
+├── utils/                    # Utility functions
+│   └── navigationCache.js    # AsyncStorage navigation caching
+└── README.md                 # Project documentation
 ```
 
 ## Contributing

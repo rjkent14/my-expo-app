@@ -59,8 +59,6 @@ const getScaledFontSize = (baseSize) => {
   return Math.round(PixelRatio.roundToNearestPixel(baseSize * fontScale));
 };
 
-const Stack = createStackNavigator();
-
 export default function App() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

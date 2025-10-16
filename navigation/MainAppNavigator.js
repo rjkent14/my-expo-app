@@ -149,7 +149,7 @@ const CustomDrawerContent = (props) => {
   );
 };
 
-const MainStackNavigator = ({ currentUser, onLogout, initialScreen, onScreenChange }) => {
+const MainAppNavigator = ({ currentUser, onLogout, initialScreen, onScreenChange }) => {
   return (
     <Stack.Navigator
       screenOptions={{
@@ -421,4 +421,4 @@ const styles = {
   },
 };
 
-export default MainStackNavigator;
+export default MainAppNavigator;
