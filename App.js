@@ -68,6 +68,7 @@ export default function App() {
   const [currentUser, setCurrentUser] = useState(null);
   const [initialScreen, setInitialScreen] = useState('Playlists');
   const [isCacheLoaded, setIsCacheLoaded] = useState(false);
+  const [animationsReady, setAnimationsReady] = useState(false);
 
   // Animation values using React Native Animated
   const logoOpacity = new Animated.Value(0);
@@ -80,6 +81,9 @@ export default function App() {
     logoOpacity.setValue(0);
     logoScale.setValue(0.8);
     formTranslateY.setValue(50);
+
+    // Mark animations as not ready initially
+    setAnimationsReady(false);
 
     // Start animations
     Animated.parallel([
@@ -100,7 +104,10 @@ export default function App() {
         delay: 300,
         useNativeDriver: true,
       }),
-    ]).start();
+    ]).start(() => {
+      // Mark animations as ready when they complete
+      setAnimationsReady(true);
+    });
   };
 
   // Load cached navigation state on app startup
@@ -122,6 +129,15 @@ export default function App() {
         setInitialScreen('Profile'); // Safe fallback
       } finally {
         setIsCacheLoaded(true);
+        // Start animations after cache is loaded to ensure proper timing
+        setTimeout(() => {
+          if (!isAuthenticated && !isSignup) {
+            resetAndStartAnimations();
+          } else {
+            // If showing main app or signup, animations are not needed for login screen
+            setAnimationsReady(true);
+          }
+        }, 50);
       }
     };
 
@@ -130,12 +146,14 @@ export default function App() {
 
   useEffect(() => {
     // Start animations when component mounts
-    resetAndStartAnimations();
+    if (!isAuthenticated && !isSignup) {
+      resetAndStartAnimations();
+    }
   }, []);
 
-  // Reset animations when navigating back from signup
+  // Reset animations when navigating back from signup or when logging out
   useEffect(() => {
-    if (!isSignup) {
+    if (!isSignup && !isAuthenticated) {
       // Small delay to ensure smooth transition
       const timeoutId = setTimeout(() => {
         resetAndStartAnimations();
@@ -144,7 +162,7 @@ export default function App() {
       // Cleanup timeout to prevent memory leaks
       return () => clearTimeout(timeoutId);
     }
-  }, [isSignup]);
+  }, [isSignup, isAuthenticated]);
 
   const logoAnimatedStyle = {
     opacity: logoOpacity,
@@ -178,6 +196,9 @@ export default function App() {
         await triggerHapticFeedback('success');
         setIsAuthenticated(true);
         setCurrentUser({ email, name: 'Test User' });
+        // Clear form fields after successful login
+        setEmail('');
+        setPassword('');
       } else {
         // Haptic feedback for error
         await triggerHapticFeedback('error');
@@ -195,6 +216,16 @@ export default function App() {
       <Text style={styles.logoTitle}>Spotify</Text>
       <Text style={styles.logoSubtitle}>Music for everyone</Text>
     </Animated.View>
+  );
+
+  const staticLogoComponent = () => (
+    <View style={styles.logoContainer}>
+      <View style={styles.logoIcon}>
+        <Text style={styles.logoText}>♪</Text>
+      </View>
+      <Text style={styles.logoTitle}>Spotify</Text>
+      <Text style={styles.logoSubtitle}>Music for everyone</Text>
+    </View>
   );
 
   // Show main app if authenticated
@@ -217,6 +248,7 @@ export default function App() {
             setCurrentUser(null);
             setEmail('');
             setPassword('');
+            setAnimationsReady(false);
             // Clear cache on logout for privacy
             clearNavigationCache();
           }}
@@ -253,7 +285,7 @@ export default function App() {
       {/* Content */}
       <View style={styles.content}>
         {/* Logo Section */}
-        {logoComponent()}
+        {animationsReady ? logoComponent() : staticLogoComponent()}
 
         {/* Form Section */}
         <Animated.View style={[styles.formContainer, formAnimatedStyle]}>
