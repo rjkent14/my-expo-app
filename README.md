@@ -26,15 +26,21 @@ A full-featured React Native/Expo application that replicates Spotify's design a
 
 ## Screenshots
 
-![Week 2 Screeshot](image/screenshot.png.jpg)
+![Week 1 Screeshot](image/screenshot.png.jpg)
 
-*The Week 2 Screeshot shows the component showcase. Able to add button, text field, scroll bar/view.*
+*The Week 1 Screeshot shows the component showcase. Able to add button, text field, scroll bar/view.*
 
 ## Week 2: Accessibility Implementation
 
 ![Week 2 Screenshot](image/Week%202%20ScreenShot.png.jpg)
 
 *The above screenshot shows the app's "Add Dynamic Components" section with controls for adding different component types, and the "Dynamic Components" section displaying an added button and image.*
+
+## Week 2 - Multi-Screen Navigation
+
+![Week 2 Multi-Screen Navigation Demo](image/Week%202%20Act%202.mp4)
+
+*This video demonstrates the completed multi-screen navigation system featuring the Profile, Settings, and Playlists screens with smooth drawer navigation, navigation state caching, and cross-platform compatibility.*
 
 ## Installation
 
@@ -139,11 +145,12 @@ my-expo-app/
 │   ├── favicon.png
 │   ├── adaptive-icon.png
 │   └── splash-icon.png
-├── image/                    # App-specific images
+├── image/            # App-specific images
 │   ├── facebook.png
 │   ├── Google.png
 │   ├── screenshot.png.jpg
-│   └── Week 2 ScreenShot.png.jpg
+│   ├── Week 2 ScreenShot.png.jpg
+│   └── Week 2 Act 2.mp4
 ├── navigation/               # Navigation components
 │   └── MainAppNavigator.js   # Main drawer navigator with animations
 ├── screens/                  # App screens
