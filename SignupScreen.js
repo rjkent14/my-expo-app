@@ -50,7 +50,7 @@ const getScaledFontSize = (baseSize) => {
   return Math.round(PixelRatio.roundToNearestPixel(baseSize * fontScale));
 };
 
-export default function SignupScreen({ onSwitchToLogin }) {
+export default function SignupScreen({ onSwitchToLogin, onSignupSuccess }) {
   const [signupEmail, setSignupEmail] = useState('');
   const [signupPassword, setSignupPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -134,9 +134,10 @@ export default function SignupScreen({ onSwitchToLogin }) {
       if (signupEmail.includes('@')) {
         // Haptic feedback for success
         await triggerHapticFeedback('success');
-        Alert.alert('Success', `Account created for ${fullName}!`);
-        // Switch back to login screen after successful signup
-        onSwitchToLogin();
+        const newUser = { email: signupEmail, name: fullName };
+        if (onSignupSuccess) {
+          onSignupSuccess(newUser);
+        }
       } else {
         // Haptic feedback for error
         await triggerHapticFeedback('error');

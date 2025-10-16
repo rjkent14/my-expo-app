@@ -40,6 +40,18 @@ The application implements comprehensive accessibility features that ensure comp
 
 Haptic feedback provides tactile confirmation for user interactions, with distinct vibration patterns differentiating between button presses, successful actions, and error states. Cross-platform testing confirms consistent behavior on both iOS and Android devices, with all animations maintaining smooth 60 FPS performance and proper keyboard avoidance functionality. The implementation successfully passes accessibility audits with full compliance for users requiring larger text, screen readers, or alternative input methods.
 
+## Week 2: Multi-Screen Navigation
+
+![Week 2 Multi-Screen Navigation Demo](image/Week%202%20Act%202.mp4)
+
+*The Week 2 Activity 2 video demonstrates the complete multi-screen navigation system with animated drawer transitions, offline state caching, and comprehensive accessibility features. The navigation flow seamlessly guides users from login through the main app screens while maintaining Spotify's signature design language and ensuring full compatibility with assistive technologies.*
+
+### Navigation Flow & Accessibility Features
+
+The navigation system implements a sophisticated drawer-based architecture that allows users to seamlessly transition between the Playlists, Profile, and Settings screens using an animated side drawer with Spotify-style branding and smooth react-native-reanimated transitions. Each screen maintains consistent header styling with green accent colors and includes proper accessibility labels, hints, and focus management for screen reader compatibility across iOS and Android platforms.
+
+Offline navigation caching using AsyncStorage ensures users return to their last visited screen when reopening the app, with intelligent fallbacks to the Profile screen if cached data is invalid or expired. The implementation includes comprehensive accessibility features such as ARIA labels for all interactive elements, keyboard navigation support, and platform-optimized animation timing that provides natural feel on both iOS and Android devices while maintaining 60 FPS performance.
+
 ## Installation
 
 1. Clone the repository:

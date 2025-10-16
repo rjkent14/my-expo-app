@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 import {
   StyleSheet,
   Text,
@@ -16,6 +18,13 @@ import {
 } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import SignupScreen from './SignupScreen';
+import MainAppNavigator from './navigation/MainAppNavigator';
+import {
+  restoreNavigationState,
+  saveNavigationState,
+  updateCachedScreen,
+  clearNavigationCache,
+} from './utils/navigationCache';
 
 const { width, height } = Dimensions.get('window');
 
@@ -50,11 +59,17 @@ const getScaledFontSize = (baseSize) => {
   return Math.round(PixelRatio.roundToNearestPixel(baseSize * fontScale));
 };
 
+const Stack = createStackNavigator();
+
 export default function App() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isSignup, setIsSignup] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [initialScreen, setInitialScreen] = useState('Playlists');
+  const [isCacheLoaded, setIsCacheLoaded] = useState(false);
 
   // Animation values using React Native Animated
   const logoOpacity = new Animated.Value(0);
@@ -89,6 +104,31 @@ export default function App() {
       }),
     ]).start();
   };
+
+  // Load cached navigation state on app startup
+  useEffect(() => {
+    const loadCachedNavigation = async () => {
+      try {
+        console.log('Loading cached navigation state...');
+        const cachedState = await restoreNavigationState();
+
+        if (cachedState && cachedState.isValid) {
+          setInitialScreen(cachedState.lastScreen);
+          console.log('Cached screen loaded:', cachedState.lastScreen);
+        } else {
+          setInitialScreen('Profile'); // Default fallback
+          console.log('Using default screen: Profile');
+        }
+      } catch (error) {
+        console.error('Error loading cached navigation:', error);
+        setInitialScreen('Profile'); // Safe fallback
+      } finally {
+        setIsCacheLoaded(true);
+      }
+    };
+
+    loadCachedNavigation();
+  }, []);
 
   useEffect(() => {
     // Start animations when component mounts
@@ -138,7 +178,8 @@ export default function App() {
       if (email === 'test@test.com' && password === 'password') {
         // Haptic feedback for success
         await triggerHapticFeedback('success');
-        Alert.alert('Success', `Welcome! Logged in with email: ${email}`);
+        setIsAuthenticated(true);
+        setCurrentUser({ email, name: 'Test User' });
       } else {
         // Haptic feedback for error
         await triggerHapticFeedback('error');
@@ -158,11 +199,44 @@ export default function App() {
     </Animated.View>
   );
 
+  // Show main app if authenticated
+  if (isAuthenticated) {
+    return (
+      <NavigationContainer>
+        <MainAppNavigator
+          currentUser={currentUser}
+          initialScreen={initialScreen}
+          onScreenChange={async (newScreen) => {
+            try {
+              await updateCachedScreen(newScreen);
+              setInitialScreen(newScreen);
+            } catch (error) {
+              console.error('Error updating cached screen:', error);
+            }
+          }}
+          onLogout={() => {
+            setIsAuthenticated(false);
+            setCurrentUser(null);
+            setEmail('');
+            setPassword('');
+            // Clear cache on logout for privacy
+            clearNavigationCache();
+          }}
+        />
+      </NavigationContainer>
+    );
+  }
+
   // Show signup screen if isSignup is true
   if (isSignup) {
     return (
       <SignupScreen
         onSwitchToLogin={() => setIsSignup(false)}
+        onSignupSuccess={(user) => {
+          setIsAuthenticated(true);
+          setCurrentUser(user);
+          setIsSignup(false);
+        }}
       />
     );
   }
