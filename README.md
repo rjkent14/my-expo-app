@@ -36,6 +36,12 @@ A full-featured React Native/Expo application that replicates Spotify's design a
 
 *The above screenshot shows the app's "Add Dynamic Components" section with controls for adding different component types, and the "Dynamic Components" section displaying an added button and image.*
 
+## Week 2 - Multi-Screen Navigation
+
+![Week 2 Multi-Screen Navigation Demo](image/Week%202%20Act%202.mp4)
+
+*This video demonstrates the completed multi-screen navigation system featuring the Profile, Settings, and Playlists screens with smooth drawer navigation, navigation state caching, and cross-platform compatibility.*
+
 ## Installation
 
 1. Clone the repository:
